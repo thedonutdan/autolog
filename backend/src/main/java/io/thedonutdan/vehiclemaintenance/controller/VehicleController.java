@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.thedonutdan.vehiclemaintenance.DTO.VehicleDTO;
+import io.thedonutdan.vehiclemaintenance.DTO.MaintenanceRecordDTO;
 import io.thedonutdan.vehiclemaintenance.manager.VehicleManager;
 import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
 import io.thedonutdan.vehiclemaintenance.model.Vehicle;
@@ -130,6 +131,22 @@ public class VehicleController {
         }
 
         return ResponseEntity.ok("Vehicle updated");
+    }
+
+    @PutMapping("/{vehicleId}/records")
+    public ResponseEntity<MaintenanceRecord> addMaintenanceRecord(
+        @PathVariable UUID vehicleId,
+        Authentication auth,
+        @RequestBody MaintenanceRecordDTO dto
+    ) {
+        UUID userId = (UUID) auth.getPrincipal();
+        MaintenanceRecord record = MaintenanceRecord.from(dto);
+        boolean success = vehicleManager.addMaintenanceRecord(userId, vehicleId, record);
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            return ResponseEntity.ok().body(record);
+        }
     }
 
     /**

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
 
+import io.thedonutdan.vehiclemaintenance.DTO.MaintenanceRecordDTO;
+
 /**
  * Represents a record of a specific maintenance performed on a vehicle
  */
@@ -52,6 +54,17 @@ public class MaintenanceRecord {
         } else {
             this.expiryDate = date.plus(expiryTime);
         }
+    }
+
+    public static MaintenanceRecord from(MaintenanceRecordDTO dto) {
+        ServiceType st = new ServiceType(dto.getServiceTypeName(), dto.getExpiryMiles(), dto.getExpiryTime());
+        return new MaintenanceRecord(
+            dto.getDate(),
+            st,
+            dto.getMileage(),
+            dto.getExpiryMiles(),
+            dto.getExpiryTime(),
+            dto.getNotes());
     }
 
     public LocalDate getDate() {

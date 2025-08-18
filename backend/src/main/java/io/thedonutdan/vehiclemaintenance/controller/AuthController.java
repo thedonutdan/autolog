@@ -62,6 +62,11 @@ public class AuthController {
         // Set expiry and JWT token
         Duration expiry = req.getRememberMe() ? Duration.ofDays(30) : Duration.ofDays(1);
         String jwt = jwtUtil.generateToken(user.getUserId(), expiry);
+        System.out.println("[Auth]  issue sub=" + user.getUserId()
+            + " fp=" + jwtUtil.getFingerprint()
+            + " token=" + jwt.substring(0, 8) + "..." + jwt.substring(jwt.length() - 8));
+        System.out.println("[Auth]  set-cookie name=jwt path=/ httpOnly=true secure=true sameSite=Strict maxAge=" + expiry);
+
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
             .httpOnly(true)
             .secure(true)

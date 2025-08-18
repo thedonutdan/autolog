@@ -1,10 +1,9 @@
-import { API_BASE } from '../constants'
 import { useEffect, useState } from 'react'
 import VehicleList from '../components/VehicleList'
 import type { Vehicle } from '../types/Vehicle'
 import { fetchWithAuth } from '../utils/fetchHandlers'
 import { useNavigate } from 'react-router-dom'
-import { AuthError, NotFoundError, ServerError } from '../utils/errors'
+import { AuthError, NotFoundError, ServerError, toTypedHttpError } from '../utils/errors'
 
 type CreateVehicleFormProps = {
     onSubmit: (data: Vehicle) => void
@@ -69,19 +68,15 @@ export default function VehiclesPage() {
             const data = await res.json();
             setVehicles(data);
           } catch (err: any) {
-            if (err.name === "AbortError") return; // ignore unmount aborts
+            if (err.name === "AbortError") return;
       
             if (err instanceof AuthError) {
-              // session expired → send to login
               navigate("/login", { replace: true });
             } else if (err instanceof NotFoundError) {
-              // optional: show an empty state or 404 UI
               setVehicles([]);
             } else if (err instanceof ServerError) {
-              // optional: toast/retry UI
               console.error("Server error:", err);
             } else {
-              // fallback for other HTTP codes/network errors
               console.error(err);
             }
           }
@@ -89,25 +84,29 @@ export default function VehiclesPage() {
       
         return () => controller.abort();
       }, [navigate]);
-
+    
     const handleCreate = async (data: Vehicle) => {
         setSubmitting(true)
         setCreateVehicleError(null)
         try {
-            const res = await fetch(`${API_BASE}/vehicles`, {
+            const res = await fetchWithAuth("/vehicles", {
                 method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
             })
-            if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`)
+
+            if (!res.ok) throw toTypedHttpError(res)
             
             const vehicleId = res.headers.get('X-Vehicle-Id')
             if (!vehicleId) throw new Error('Missing X-Vehicle-Id header')
-            
+
             setVehicles(prev => [{...data, id: vehicleId}, ...prev])
-        } catch (e: any) {
-            setCreateVehicleError(e?.message ?? 'Failed to create vehicle')
+        } catch (err:any) {
+            if (err instanceof AuthError) {
+                navigate("/login", { replace: true})
+            } else {
+                setCreateVehicleError(err?.message ?? 'Failed to create vehicle')
+            }
         } finally {
             setSubmitting(false)
         }

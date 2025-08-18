@@ -1,10 +1,11 @@
-import { API_BASE } from "../constants"
-import { useParams, useLocation } from "react-router-dom"
+import { useParams, useLocation, useNavigate } from "react-router-dom"
 import type { Vehicle } from "../types/Vehicle"
 import MaintenanceRecordList from "../components/MaintenanceRecordList"
 import type { MaintenanceRecordDTO } from "../types/MaintenanceRecordDTO"
 import { useState, useEffect } from "react"
 import type { MaintenanceRecord } from "../types/MaintenanceRecord"
+import { fetchWithAuth } from "../utils/fetchHandlers"
+import { AuthError, toTypedHttpError } from "../utils/errors"
 
 type CreateMaintenanceRecordFormProps = {
     onSubmit: (data: MaintenanceRecordDTO) => void
@@ -99,28 +100,33 @@ export default function VehicleDetailsPage() {
     const [error, setError] = useState<string | null>(null)
     const [submitting, setSubmitting] = useState(false)
     const [createMaintenanceRecordError, setCreateMaintenanceRecordError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
-        if (vehicleFromState) return;           // already have everything
+        if (vehicleFromState) return;
         let cancelled = false;
         
         (async () => {
             try {
-            setLoading(true)
-            const res = await fetch(`${API_BASE}/vehicles/${id}`)
-            if (!res.ok) throw new Error(`HTTP ${res.status}`)
-            const v = (await res.json()) as Vehicle
-            if (!cancelled) {
-                setHeader({
-                year: v.year, make: v.make, model: v.model,
-                vin: v.vin, licensePlate: v.licensePlate, mileage: v.mileage,
-                });
-                setRecords(v.maintenanceHistory ?? [])
-            }
+                setLoading(true)
+                const res = await fetchWithAuth(`/vehicles/${id}`)
+                
+                if (!res.ok) throw toTypedHttpError(res)
+                const v = (await res.json()) as Vehicle
+                if (!cancelled) {
+                    setHeader({
+                    year: v.year, make: v.make, model: v.model,
+                    vin: v.vin, licensePlate: v.licensePlate, mileage: v.mileage,
+                    });
+                    setRecords(v.maintenanceHistory ?? [])
+                }
             } catch (e: any) {
-            if (!cancelled) setError(e.message ?? 'Failed to load vehicle');
+                if (e instanceof AuthError) {
+                    navigate('/login', { replace: true })
+                }
+                if (!cancelled) setError(e.message ?? 'Failed to load vehicle');
             } finally {
-            if (!cancelled) setLoading(false)
+                if (!cancelled) setLoading(false)
             }
         })();
         
@@ -131,13 +137,13 @@ export default function VehicleDetailsPage() {
         setSubmitting(true)
         
         try {
-            const res = await fetch(`${API_BASE}/vehicles/${id}/records`, {
+            const res = await fetchWithAuth(`/vehicles/${id}/records`, {
                 method: 'PUT',
-                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             })
-            if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`)
+
+            if (!res.ok) throw toTypedHttpError(res)
             
             const newRecord = (await res.json()) as MaintenanceRecord
             if (!newRecord) throw new Error('Malformed MaintenanceRecord in response')
@@ -146,6 +152,9 @@ export default function VehicleDetailsPage() {
             setSubmitting(false)
             setCreateMaintenanceRecordError(null)
         } catch (e: any) {
+            if (e instanceof AuthError) {
+                navigate('/login', { replace: true })
+            }
             setCreateMaintenanceRecordError(e?.message ?? "Failed to create maintenance record")
         } finally {
             setSubmitting(false)

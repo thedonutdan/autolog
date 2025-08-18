@@ -37,17 +37,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         try {
-            System.out.println("[JwtFilter] " + request.getMethod() + " " + request.getRequestURI()
-                + " cookies=" + (request.getCookies() == null ? 0 : request.getCookies().length));
-
             if (request.getCookies() != null) {
                 for (Cookie c : request.getCookies()) {
                     if ("jwt".equals(c.getName())) {
-                        String v = c.getValue();
-                        int n = (v == null ? 0 : v.length());
-                        String snippet = (v == null) ? "null"
-                                : (n <= 16 ? v : (v.substring(0, 8) + "..." + v.substring(n - 8)));
-                        System.out.println("[JwtFilter] found jwt cookie len=" + n + " token=" + snippet);
                         try {
 
                             UUID userId = jwtUtil.parseToken(c.getValue());
@@ -59,7 +51,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                 Collections.emptyList() // or user roles: List.of(new SimpleGrantedAuthority("ROLE_USER"))
                             );
                             SecurityContextHolder.getContext().setAuthentication(auth);
-                            System.out.println("[JwtFilter] authenticated principal=" + user.getUserId());
                             } else {
                                 System.out.println("[JwtFilter] user not found for id=" + userId);
                             }
@@ -73,7 +64,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             e.printStackTrace();
         }
         filterChain.doFilter(request, response);
-        System.out.println("[JwtFilter] " + request.getMethod() + " " + request.getRequestURI()
-            + " -> status " + response.getStatus());
     }
 }

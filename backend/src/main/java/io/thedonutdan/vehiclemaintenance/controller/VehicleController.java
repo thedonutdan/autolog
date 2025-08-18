@@ -42,7 +42,7 @@ public class VehicleController {
     /**
      * Creates a vehicle in the database
      * @param dto the vehicle dto to add to the database
-     * @param userId user id associated with the vehicle (for authorization purposes)
+     * @param auth Authentication principle
      * @return HTTP 201 if vehicle is created successfully, 400 if vehicle object is malformed
      */
     @PostMapping
@@ -71,7 +71,7 @@ public class VehicleController {
     /**
      * Retrieves a vehicle from the database by vehicle id
      * @param vehicleId id of vehicle to retrieve
-     * @param userId user id for validation
+     * @param auth Authentication principle
      * @return HTTP 404 if vehicle does not exist, vehicle DTO and HTTP 200 if vehicle is found
      */
     @GetMapping("/{vehicleId}")
@@ -86,7 +86,7 @@ public class VehicleController {
 
     /**
      * Retrieves all vehicles associated with a specific user id
-     * @param userId user id to retrieve vehicles for
+     * @param auth Authentication principle
      * @return HTTP 200 and list of vehicle DTOs associated with user id
      */
     @GetMapping
@@ -101,7 +101,7 @@ public class VehicleController {
     /**
      * Updates a vehicle in the database
      * @param vehicleId id of vehicle to update
-     * @param userId user id associated with vehicle for authorization
+     * @param auth Authentication principle
      * @param dto updated vehicle DTO
      * @return HTTP 400 if vehicle is malformed or vehicle id in request does not match vehicle object, HTTP 403 if vehicle does not exist or is not authorized
      * for that user. HTTP 200 if update is successful.
@@ -132,7 +132,14 @@ public class VehicleController {
 
         return ResponseEntity.ok("Vehicle updated");
     }
-
+    
+    /**
+     * Adds a maintenance record to the vehicle with the corresponding ID
+     * @param vehicleId ID of vehicle to add to
+     * @param auth Authentication principle
+     * @param dto Data transfer object for new Maintenance Record
+     * @return
+     */
     @PutMapping("/{vehicleId}/records")
     public ResponseEntity<MaintenanceRecord> addMaintenanceRecord(
         @PathVariable UUID vehicleId,
@@ -143,16 +150,16 @@ public class VehicleController {
         MaintenanceRecord record = MaintenanceRecord.from(dto);
         boolean success = vehicleManager.addMaintenanceRecord(userId, vehicleId, record);
         if (!success) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Database failure or vehicle is not authorized
         } else {
-            return ResponseEntity.ok().body(record);
+            return ResponseEntity.ok().body(record); 
         }
     }
 
     /**
      * Removes a vehicle from the database
      * @param vehicleId id of vehicle to be removed
-     * @param userId id of user for authorization
+     * @param auth Authentication principle
      * @return HTTP 403 if vehicle is not found or user is not authorized. HTTP 200 if removal is successful.
      */
     @DeleteMapping("/{vehicleId}")
@@ -172,7 +179,7 @@ public class VehicleController {
     /**
      * Adds a maintenance record to a vehicle
      * @param vehicleId id of vehicle to be updated
-     * @param userId user id for authorization
+     * @param auth Authentication principle
      * @param record record to be added to vehicle
      * @return HTTP 400 if record is malformed, HTTP 403 if vehicle is not found or user is not authorized. HTTP 200 if successful.
      */

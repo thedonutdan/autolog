@@ -51,6 +51,11 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully!");
     }
 
+    /**
+     * Handles logging in and sends a cookie to be used for authentication moving forward
+     * @param req Login request containing username and password
+     * @return HTTP 200 with cookie for authentication
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         // Check login info
@@ -62,11 +67,6 @@ public class AuthController {
         // Set expiry and JWT token
         Duration expiry = req.getRememberMe() ? Duration.ofDays(30) : Duration.ofDays(1);
         String jwt = jwtUtil.generateToken(user.getUserId(), expiry);
-        System.out.println("[Auth]  issue sub=" + user.getUserId()
-            + " fp=" + jwtUtil.getFingerprint()
-            + " token=" + jwt.substring(0, 8) + "..." + jwt.substring(jwt.length() - 8));
-        System.out.println("[Auth]  set-cookie name=jwt path=/ httpOnly=true secure=true sameSite=Strict maxAge=" + expiry);
-
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
             .httpOnly(true)
             .secure(true)
@@ -80,6 +80,10 @@ public class AuthController {
             .body("Login successful");
     }
 
+    /**
+     * Resets authentication cookie on client
+     * @return HTTP 200 upon resetting cookie
+     */
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         ResponseCookie deleteJWTCookie = ResponseCookie.from("jwt", "")

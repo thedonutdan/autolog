@@ -3,6 +3,7 @@ import './App.css'
 import VehiclesPage from './pages/VehiclesPage'
 import VehicleDetailsPage from './pages/VehicleDetailsPage'
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/vehicles" element={<VehiclesPage />} />
         <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
         {/* Other routes will live here later*/}

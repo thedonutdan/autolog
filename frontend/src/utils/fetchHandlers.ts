@@ -1,5 +1,5 @@
 import { API_BASE } from "../constants"
-import { AuthError, NotFoundError, ServerError, toTypedHttpError } from "./errors"
+import { toTypedHttpError } from "./errors"
 
 /**
  * Makes a fetch call with credentials included. Returns an internally typed HttpError upon failure
@@ -9,9 +9,8 @@ import { AuthError, NotFoundError, ServerError, toTypedHttpError } from "./error
  */
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     const res = await fetch(`${API_BASE}${url}`, {
-        credentials: 'include',
-        headers: options.headers,
         ...options,
+        credentials: 'include',
     })
 
     if (!res.ok) throw toTypedHttpError(res)

@@ -2,6 +2,9 @@ import { API_BASE } from '../constants'
 import { useEffect, useState } from 'react'
 import VehicleList from '../components/VehicleList'
 import type { Vehicle } from '../types/Vehicle'
+import { fetchWithAuth } from '../utils/fetchHandlers'
+import { useNavigate } from 'react-router-dom'
+import { AuthError, NotFoundError, ServerError } from '../utils/errors'
 
 type CreateVehicleFormProps = {
     onSubmit: (data: Vehicle) => void
@@ -55,26 +58,37 @@ export default function VehiclesPage() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
     const [submitting, setSubmitting] = useState(false)
     const [createVehicleError, setCreateVehicleError] = useState<string | null>()
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const controller = new AbortController()
-
-        fetch(`${API_BASE}/vehicles`, { credentials: 'include' })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status} ${res.statusText}`)
-                }
-                return res.json()
-            })
-            .then(data => setVehicles(data))
-            .catch(err => {
-                if (err.name !== 'AbortError') {
-                    console.error(err)
-                }
-            })
-
-            return () => controller.abort()
-    }, [])
+        const controller = new AbortController();
+      
+        (async () => {
+          try {
+            const res = await fetchWithAuth(`/vehicles`, { signal: controller.signal });
+            const data = await res.json();
+            setVehicles(data);
+          } catch (err: any) {
+            if (err.name === "AbortError") return; // ignore unmount aborts
+      
+            if (err instanceof AuthError) {
+              // session expired → send to login
+              navigate("/login", { replace: true });
+            } else if (err instanceof NotFoundError) {
+              // optional: show an empty state or 404 UI
+              setVehicles([]);
+            } else if (err instanceof ServerError) {
+              // optional: toast/retry UI
+              console.error("Server error:", err);
+            } else {
+              // fallback for other HTTP codes/network errors
+              console.error(err);
+            }
+          }
+        })();
+      
+        return () => controller.abort();
+      }, [navigate]);
 
     const handleCreate = async (data: Vehicle) => {
         setSubmitting(true)

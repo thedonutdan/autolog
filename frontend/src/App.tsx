@@ -4,6 +4,7 @@ import VehiclesPage from './pages/VehiclesPage'
 import VehicleDetailsPage from './pages/VehicleDetailsPage'
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AppLayout from './layouts/AppLayout';
 
 
 function App() {
@@ -13,8 +14,10 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/vehicles" element={<VehiclesPage />} />
-        <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/vehicles" element={<VehiclesPage />} />
+          <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
+        </Route>
         {/* Other routes will live here later*/}
       </Routes>
     </Router>

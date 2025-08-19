@@ -4,6 +4,7 @@ import type { Vehicle } from '../types/Vehicle'
 import { fetchWithAuth } from '../utils/fetchHandlers'
 import { useNavigate } from 'react-router-dom'
 import { AuthError, NotFoundError, ServerError, toTypedHttpError } from '../utils/errors'
+import Disclosure from '../components/Disclosure'
 
 type CreateVehicleFormProps = {
     onSubmit: (data: Vehicle) => void
@@ -57,6 +58,7 @@ export default function VehiclesPage() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
     const [submitting, setSubmitting] = useState(false)
     const [createVehicleError, setCreateVehicleError] = useState<string | null>()
+    const [createVehicleFormOpen, setCreateVehicleFormOpen] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -101,6 +103,7 @@ export default function VehiclesPage() {
             if (!vehicleId) throw new Error('Missing X-Vehicle-Id header')
 
             setVehicles(prev => [{...data, id: vehicleId}, ...prev])
+            setCreateVehicleFormOpen(false)
         } catch (err:any) {
             if (err instanceof AuthError) {
                 navigate("/login", { replace: true})
@@ -115,7 +118,9 @@ export default function VehiclesPage() {
     return (
         <main>
             <h1>Your Vehicles</h1>
-            <CreateVehicleForm onSubmit={handleCreate} submitting={submitting} error={createVehicleError} />
+            <Disclosure title="Add Vehicle" isOpen={createVehicleFormOpen} onToggle={() => setCreateVehicleFormOpen(o => !o)}>
+                <CreateVehicleForm onSubmit={handleCreate} submitting={submitting} error={createVehicleError} />
+            </Disclosure>
             <VehicleList vehicles={vehicles} />
         </main>
     )

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import type { MaintenanceRecord } from "../types/MaintenanceRecord"
 import { fetchWithAuth } from "../utils/fetchHandlers"
 import { AuthError, toTypedHttpError } from "../utils/errors"
+import Disclosure from "../components/Disclosure"
 
 type CreateMaintenanceRecordFormProps = {
     onSubmit: (data: MaintenanceRecordDTO) => void
@@ -100,6 +101,7 @@ export default function VehicleDetailsPage() {
     const [error, setError] = useState<string | null>(null)
     const [submitting, setSubmitting] = useState(false)
     const [createMaintenanceRecordError, setCreateMaintenanceRecordError] = useState<string | null>(null)
+    const [createMaintenanceRecordFormOpen, setCreateMaintenanceRecordOpen] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -151,6 +153,7 @@ export default function VehicleDetailsPage() {
             setRecords(prev => [...prev, newRecord])
             setSubmitting(false)
             setCreateMaintenanceRecordError(null)
+            setCreateMaintenanceRecordOpen(false)
         } catch (e: any) {
             if (e instanceof AuthError) {
                 navigate('/login', { replace: true })
@@ -172,11 +175,12 @@ export default function VehicleDetailsPage() {
             ) : header ? (
                 <>
                 <h2>{header.year} {header.make} {header.model}</h2>
-
-                <CreateMaintenanceRecordForm
-                    onSubmit={handleCreateMaintenanceRecord}
-                    submitting={false}
-                    error={createMaintenanceRecordError} />
+                <Disclosure title="Add Maintenance Record" isOpen={createMaintenanceRecordFormOpen} onToggle={() => setCreateMaintenanceRecordOpen(o => !o)}>
+                    <CreateMaintenanceRecordForm
+                        onSubmit={handleCreateMaintenanceRecord}
+                        submitting={false}
+                        error={createMaintenanceRecordError} />
+                </Disclosure>
 
                 <section>
                     <MaintenanceRecordList records={records} />

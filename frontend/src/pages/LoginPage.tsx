@@ -1,6 +1,6 @@
 import { API_BASE } from '../constants'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function LoginPage() {
     const [loginUsername, setLoginUsername] = useState('')
@@ -43,7 +43,7 @@ function LoginPage() {
                 </label>
                 <button type="submit">Login</button>
             </form>
-            <p>Don't have an account? <a href="./register">Register Here!</a></p>
+            <p>Don't have an account? <Link to="/register">Register</Link></p>
         </section>
     )
 }

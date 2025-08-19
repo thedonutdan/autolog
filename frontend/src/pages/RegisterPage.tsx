@@ -1,6 +1,6 @@
 import { API_BASE } from '../constants'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function RegisterPage() {
     const [registerUsername, setRegisterUsername] = useState('')
@@ -38,7 +38,7 @@ function RegisterPage() {
                 <input value={registerPassword} onChange={e => setRegisterPassword(e.target.value)} type="password" />
                 <button type="submit">Register</button>
             </form>
-            <p>Already have an account? <a href="./login">Login Here!</a></p>
+            <p>Already have an account? <Link to="/login">Login</Link></p>
         </section>
     )
 }

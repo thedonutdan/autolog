@@ -2,7 +2,7 @@ import type { ServiceType } from './ServiceType.ts'
 
 export interface MaintenanceRecordDTO {
     date: string
-    name: string
+    serviceTypeName: string
     mileage: number
     expiryMiles: number | null
     expiryTime: string | null

@@ -27,7 +27,7 @@ function CreateMaintenanceRecordForm({ onSubmit, submitting = false, error = nul
 
         const dto: MaintenanceRecordDTO = {
             date: date,
-            name: name,
+            serviceTypeName: name,
             expiryMiles: Number(expiryMiles),
             expiryTime: expiryTime,
             mileage: Number(mileage),

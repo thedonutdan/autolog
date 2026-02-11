@@ -1,5 +1,3 @@
-import type { ServiceType } from './ServiceType.ts'
-
 export interface MaintenanceRecordDTO {
     date: string
     serviceTypeName: string

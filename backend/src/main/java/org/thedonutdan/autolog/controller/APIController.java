@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.CacheControl;
+
 
 import java.util.UUID;
 import java.util.Map;
@@ -34,8 +36,8 @@ public class APIController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return ResponseEntity.ok(
-            Map.of("guest", user.isGuest())
-        );
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noStore())
+            .body(Map.of("guest", user.isGuest()));
     }
 }

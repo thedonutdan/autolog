@@ -1,5 +1,4 @@
 import type { MaintenanceRecord } from "../types/MaintenanceRecord"
-import type { ServiceType } from "../types/ServiceType"
 
 type Props = {
     record: MaintenanceRecord

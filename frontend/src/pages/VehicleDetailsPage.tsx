@@ -178,7 +178,7 @@ export default function VehicleDetailsPage() {
                 <Disclosure title="Add Maintenance Record" isOpen={createMaintenanceRecordFormOpen} onToggle={() => setCreateMaintenanceRecordOpen(o => !o)}>
                     <CreateMaintenanceRecordForm
                         onSubmit={handleCreateMaintenanceRecord}
-                        submitting={false}
+                        submitting={submitting}
                         error={createMaintenanceRecordError} />
                 </Disclosure>
 

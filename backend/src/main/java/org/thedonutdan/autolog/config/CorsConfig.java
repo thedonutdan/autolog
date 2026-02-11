@@ -16,7 +16,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:5173") // Your frontend dev server
+                    .allowedOrigins("https://autolog.thedonutdan.org")
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
                     .exposedHeaders("X-Vehicle-Id")

@@ -46,9 +46,33 @@ public class AuthController {
         user.setUserId(UUID.randomUUID());
         user.setUsername(req.getUsername());
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        user.setGuest(false);
         userDAO.insert(user);
 
         return ResponseEntity.ok("User registered successfully!");
+    }
+
+
+    @PostMapping("/guest")
+    public ResponseEntity<?> guest() {
+        User user = new User();
+        user.setUserId(UUID.randomUUID());
+        user.setGuest(true);
+        userDAO.insert(user);
+
+        Duration expiry = Duration.ofDays(180);
+        String jwt = jwtUtil.generateToken(user.getUserId(), expiry);
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("Strict")
+            .maxAge(expiry)
+            .build();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .body("Guest login successful");
     }
 
     /**

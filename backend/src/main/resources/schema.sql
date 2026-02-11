@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
+    password_hash TEXT NOT NULL,
+    guest BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS vehicles (

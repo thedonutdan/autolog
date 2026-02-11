@@ -29,13 +29,14 @@ public class SQLiteUserDAO implements UserDAO{
     @Override
     public boolean insert(User user) {
         String query = """
-                INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)
+                INSERT INTO users (user_id, username, password_hash, guest) VALUES (?, ?, ?, ?)
                 """;
         
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, user.getUserId().toString());
             stmt.setString(2, user.getUsername());
             stmt.setString(3, user.getPasswordHash());
+            stmt.setString(4, String.valueOf(user.isGuest()));
 
             stmt.executeUpdate();
             return true;
@@ -89,6 +90,7 @@ public class SQLiteUserDAO implements UserDAO{
                 user.setUserId(UUID.fromString(rs.getString("user_id")));
                 user.setUsername(rs.getString("username"));
                 user.setPasswordHash(rs.getString("password_hash"));
+                user.setGuest(rs.getBoolean("guest"));
 
                 return user;
             }

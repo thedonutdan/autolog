@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    username TEXT UNIQUE,
+    password_hash TEXT,
     guest BOOLEAN NOT NULL
 );
 

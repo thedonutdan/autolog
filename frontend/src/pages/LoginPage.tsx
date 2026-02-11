@@ -1,8 +1,16 @@
 import { API_BASE } from '../constants'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
 function LoginPage() {
+    useEffect(() => {
+        fetch(`${API_BASE}/api/me`, { credentials : "include" })
+            .then(res => {
+                if (res.ok) {
+                    navigate("/vehicles")
+                }
+            });
+    }, [])
     const [loginUsername, setLoginUsername] = useState('')
     const [loginPassword, setLoginPassword] = useState('')
     const [rememberMe, setRememberMe] = useState(false)
@@ -30,6 +38,23 @@ function LoginPage() {
         }
     }
 
+    const handleGuestLogin = async ()=> {
+        try {
+            const res = await fetch(`${API_BASE}/auth/guest`, {
+                method: "POST",
+                credentials: "include"
+            })
+
+            if (res.ok) {
+                navigate("/vehicles")
+            } else {
+                console.error("guest login failed")
+            }
+        } catch (err) {
+            console.error("error", err)
+        }
+    }
+
     return (
         <section>
             <form onSubmit={handleLogin}>
@@ -44,6 +69,9 @@ function LoginPage() {
                 <button type="submit">Login</button>
             </form>
             <p>Don't have an account? <Link to="/register">Register</Link></p>
+            <button onClick={handleGuestLogin}>
+                Continue as guest
+            </button>
         </section>
     )
 }

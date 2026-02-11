@@ -13,15 +13,15 @@
     <relativePath/> <!-- allows Maven to look it up from repo -->
   </parent>
 
-  <groupId>io.thedonutdan.vehiclemaintenance</groupId>
+  <groupId>org.thedonutdan.autolog</groupId>
   <artifactId>backend</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>backend</name>
-  <description>Backend to support vehicle maintenance app</description>
+  <name>autolog</name>
+  <description>Backend to support autolog app</description>
 
-  <url>https://thedonutdan.github.io/thedonutdan/</url>
+  <url>https://thedonutdan.org</url>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
@@ -162,7 +162,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>io.thedonutdan.vehiclemaintenance.Main</mainClass>
+              <mainClass>org.thedonutdan.autolog.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

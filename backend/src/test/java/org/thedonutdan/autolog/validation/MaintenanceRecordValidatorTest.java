@@ -42,7 +42,7 @@ public class MaintenanceRecordValidatorTest {
         
         List<String> errors = MaintenanceRecordValidator.validate(record);
         assertEquals(1, errors.size());
-        assertTrue(errors.contains("Date is required."));
+        assertTrue(errors.contains("Maintenance Date is required"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class MaintenanceRecordValidatorTest {
         
         List<String> errors = MaintenanceRecordValidator.validate(record);
         assertEquals(1, errors.size());
-        assertTrue(errors.contains("Date cannot be in the future."));
+        assertTrue(errors.contains("Date cannot be in the future"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class MaintenanceRecordValidatorTest {
         
         List<String> errors = MaintenanceRecordValidator.validate(record);
         assertEquals(1, errors.size());
-        assertTrue(errors.contains("Mileage must be non-negative."));
+        assertTrue(errors.contains("Mileage must not be negative"));
     }
 
     @Test
@@ -92,6 +92,6 @@ public class MaintenanceRecordValidatorTest {
         
         List<String> errors = MaintenanceRecordValidator.validate(record);
         assertEquals(1, errors.size());
-        assertTrue(errors.contains("Service type is required."));
+        assertTrue(errors.contains("Service type is required"));
     }
 }

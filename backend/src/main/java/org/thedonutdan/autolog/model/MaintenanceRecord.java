@@ -41,18 +41,18 @@ public class MaintenanceRecord {
         this.mileage = mileage;
         this.notes = notes;
         if (expiryMiles == null) {
-            if (serviceType.getDefaultExpiryMiles() != null) {
+            if (serviceType != null && serviceType.getDefaultExpiryMiles() != null) {
                 this.expiryMileage = mileage + serviceType.getDefaultExpiryMiles();
             }
         } else {
             this.expiryMileage = mileage + expiryMiles;
         }
-        if (expiryTime == null) {
-            if (serviceType.getDefaultExpiryTime() != null) {
+        if (expiryTime == null && date != null) {
+            if (serviceType != null && serviceType.getDefaultExpiryTime() != null) {
                 this.expiryDate = date.plus(serviceType.getDefaultExpiryTime());
             }
         } else {
-            this.expiryDate = date.plus(expiryTime);
+            if (date != null) this.expiryDate = date.plus(expiryTime);
         }
     }
 

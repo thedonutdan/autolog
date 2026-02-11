@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.model;
+package org.thedonutdan.autolog.model;
 
 import org.junit.jupiter.api.Test;
 

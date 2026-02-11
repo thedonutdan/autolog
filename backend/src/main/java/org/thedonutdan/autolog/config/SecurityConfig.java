@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.config;
+package org.thedonutdan.autolog.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import org.springframework.http.HttpMethod;
@@ -14,9 +14,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.SecurityFilterChain;
 
 
-import io.thedonutdan.vehiclemaintenance.DAO.UserDAO;
-import io.thedonutdan.vehiclemaintenance.security.JwtAuthFilter;
-import io.thedonutdan.vehiclemaintenance.security.JwtUtil;
+import org.thedonutdan.autolog.DAO.UserDAO;
+import org.thedonutdan.autolog.security.JwtAuthFilter;
+import org.thedonutdan.autolog.security.JwtUtil;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

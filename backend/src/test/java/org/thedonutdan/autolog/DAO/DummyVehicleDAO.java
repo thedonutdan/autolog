@@ -1,6 +1,6 @@
-package io.thedonutdan.vehiclemaintenance.DAO;
+package org.thedonutdan.autolog.DAO;
 
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
+import org.thedonutdan.autolog.model.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;

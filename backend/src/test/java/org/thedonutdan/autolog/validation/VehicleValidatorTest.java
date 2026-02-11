@@ -1,9 +1,10 @@
-package io.thedonutdan.vehiclemaintenance.validation;
+package org.thedonutdan.autolog.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
+import org.thedonutdan.autolog.model.Vehicle;
+
 import java.util.List;
 import java.util.UUID;
 import java.time.Year;

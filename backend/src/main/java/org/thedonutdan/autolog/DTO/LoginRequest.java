@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.DTO;
+package org.thedonutdan.autolog.DTO;
 
 /**
  * Data transfer object containing user login information (username and password)

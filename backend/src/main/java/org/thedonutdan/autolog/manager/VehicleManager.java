@@ -1,8 +1,8 @@
-package io.thedonutdan.vehiclemaintenance.manager;
+package org.thedonutdan.autolog.manager;
 
-import io.thedonutdan.vehiclemaintenance.DAO.VehicleDAO;
-import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
+import org.thedonutdan.autolog.DAO.VehicleDAO;
+import org.thedonutdan.autolog.model.MaintenanceRecord;
+import org.thedonutdan.autolog.model.Vehicle;
 
 import java.util.List;
 import java.util.UUID;

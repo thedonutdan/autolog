@@ -1,6 +1,6 @@
-package io.thedonutdan.vehiclemaintenance.validation;
+package org.thedonutdan.autolog.validation;
 
-import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
+import org.thedonutdan.autolog.model.MaintenanceRecord;
 
 import java.util.List;
 import java.util.ArrayList;

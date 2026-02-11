@@ -1,8 +1,8 @@
-package io.thedonutdan.vehiclemaintenance.DAO;
+package org.thedonutdan.autolog.DAO;
 
 import java.util.UUID;
 
-import io.thedonutdan.vehiclemaintenance.model.User;
+import org.thedonutdan.autolog.model.User;
 
 /**
  * User data access interface for interacting with users stored in database

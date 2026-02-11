@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance;
+package org.thedonutdan.autolog;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
@@ -7,8 +7,8 @@ import org.springframework.boot.SpringApplication;
  * Spring boot application to serve API
  */
 @SpringBootApplication
-public class VehicleMaintenanceApplication {
+public class AutoLogApplication {
     public static void main(String args[]) {
-        SpringApplication.run(VehicleMaintenanceApplication.class, args);
+        SpringApplication.run(AutoLogApplication.class, args);
     }
 }

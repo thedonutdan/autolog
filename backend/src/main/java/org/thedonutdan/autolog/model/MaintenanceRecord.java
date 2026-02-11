@@ -1,10 +1,10 @@
-package io.thedonutdan.vehiclemaintenance.model;
+package org.thedonutdan.autolog.model;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
 
-import io.thedonutdan.vehiclemaintenance.DTO.MaintenanceRecordDTO;
+import org.thedonutdan.autolog.DTO.MaintenanceRecordDTO;
 
 /**
  * Represents a record of a specific maintenance performed on a vehicle

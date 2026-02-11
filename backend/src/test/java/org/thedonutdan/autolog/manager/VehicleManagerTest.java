@@ -1,14 +1,14 @@
-package io.thedonutdan.vehiclemaintenance.manager;
+package org.thedonutdan.autolog.manager;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
-import io.thedonutdan.vehiclemaintenance.DAO.DummyVehicleDAO;
-import io.thedonutdan.vehiclemaintenance.DAO.VehicleDAO;
-import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
-import io.thedonutdan.vehiclemaintenance.model.ServiceType;
+import org.thedonutdan.autolog.model.Vehicle;
+import org.thedonutdan.autolog.DAO.DummyVehicleDAO;
+import org.thedonutdan.autolog.DAO.VehicleDAO;
+import org.thedonutdan.autolog.model.MaintenanceRecord;
+import org.thedonutdan.autolog.model.ServiceType;
 
 import java.util.UUID;
 import java.time.LocalDate;

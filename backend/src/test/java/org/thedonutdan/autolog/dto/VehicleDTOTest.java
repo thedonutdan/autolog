@@ -1,10 +1,10 @@
-package io.thedonutdan.vehiclemaintenance.dto;
+package org.thedonutdan.autolog.dto;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
-import io.thedonutdan.vehiclemaintenance.DTO.VehicleDTO;
+import org.thedonutdan.autolog.model.Vehicle;
+import org.thedonutdan.autolog.DTO.VehicleDTO;
 import java.util.UUID;
 
 public class VehicleDTOTest {

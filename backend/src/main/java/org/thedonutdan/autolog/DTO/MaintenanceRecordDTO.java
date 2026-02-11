@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.DTO;
+package org.thedonutdan.autolog.DTO;
 
 import java.time.LocalDate;
 import java.time.Period;

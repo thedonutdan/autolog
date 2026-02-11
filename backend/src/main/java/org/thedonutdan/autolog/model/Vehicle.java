@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.model;
+package org.thedonutdan.autolog.model;
 
 
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import io.thedonutdan.vehiclemaintenance.DTO.VehicleDTO;
+import org.thedonutdan.autolog.DTO.VehicleDTO;
 
 /** Represents a vehicle that is being monitored */
 public class Vehicle {

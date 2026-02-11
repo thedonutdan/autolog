@@ -1,10 +1,10 @@
-package io.thedonutdan.vehiclemaintenance.controller;
+package org.thedonutdan.autolog.controller;
 
-import io.thedonutdan.vehiclemaintenance.DAO.UserDAO;
-import io.thedonutdan.vehiclemaintenance.DTO.LoginRequest;
-import io.thedonutdan.vehiclemaintenance.DTO.RegisterRequest;
-import io.thedonutdan.vehiclemaintenance.model.User;
-import io.thedonutdan.vehiclemaintenance.security.JwtUtil;
+import org.thedonutdan.autolog.DAO.UserDAO;
+import org.thedonutdan.autolog.DTO.LoginRequest;
+import org.thedonutdan.autolog.DTO.RegisterRequest;
+import org.thedonutdan.autolog.model.User;
+import org.thedonutdan.autolog.security.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;

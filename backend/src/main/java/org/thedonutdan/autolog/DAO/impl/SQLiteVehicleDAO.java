@@ -1,9 +1,9 @@
-package io.thedonutdan.vehiclemaintenance.DAO.impl;
+package org.thedonutdan.autolog.DAO.impl;
 
-import io.thedonutdan.vehiclemaintenance.DAO.VehicleDAO;
-import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
-import io.thedonutdan.vehiclemaintenance.model.ServiceType;
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
+import org.thedonutdan.autolog.DAO.VehicleDAO;
+import org.thedonutdan.autolog.model.MaintenanceRecord;
+import org.thedonutdan.autolog.model.ServiceType;
+import org.thedonutdan.autolog.model.Vehicle;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

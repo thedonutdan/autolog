@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.config;
+package org.thedonutdan.autolog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

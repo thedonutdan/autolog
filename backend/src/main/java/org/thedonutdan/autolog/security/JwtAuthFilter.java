@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.security;
+package org.thedonutdan.autolog.security;
 
 import java.io.IOError;
 import java.io.IOException;
@@ -13,8 +13,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.JwtException;
 import io.micrometer.common.lang.NonNull;
-import io.thedonutdan.vehiclemaintenance.DAO.UserDAO;
-import io.thedonutdan.vehiclemaintenance.model.User;
+
+import org.thedonutdan.autolog.DAO.UserDAO;
+import org.thedonutdan.autolog.model.User;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

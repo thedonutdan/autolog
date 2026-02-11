@@ -1,9 +1,9 @@
-package io.thedonutdan.vehiclemaintenance.validation;
+package org.thedonutdan.autolog.validation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
+import org.thedonutdan.autolog.model.Vehicle;
 
 /**
  * Provides validation utilities for Vehicle objects

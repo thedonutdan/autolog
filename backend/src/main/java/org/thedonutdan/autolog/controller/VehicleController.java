@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.controller;
+package org.thedonutdan.autolog.controller;
 
 import java.util.List;
 
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.thedonutdan.vehiclemaintenance.DTO.VehicleDTO;
-import io.thedonutdan.vehiclemaintenance.DTO.MaintenanceRecordDTO;
-import io.thedonutdan.vehiclemaintenance.manager.VehicleManager;
-import io.thedonutdan.vehiclemaintenance.model.MaintenanceRecord;
-import io.thedonutdan.vehiclemaintenance.model.Vehicle;
-import io.thedonutdan.vehiclemaintenance.validation.MaintenanceRecordValidator;
-import io.thedonutdan.vehiclemaintenance.validation.VehicleValidator;
+import org.thedonutdan.autolog.DTO.VehicleDTO;
+import org.thedonutdan.autolog.DTO.MaintenanceRecordDTO;
+import org.thedonutdan.autolog.manager.VehicleManager;
+import org.thedonutdan.autolog.model.MaintenanceRecord;
+import org.thedonutdan.autolog.model.Vehicle;
+import org.thedonutdan.autolog.validation.MaintenanceRecordValidator;
+import org.thedonutdan.autolog.validation.VehicleValidator;
 
 import java.util.UUID;
 import java.util.stream.Collectors;

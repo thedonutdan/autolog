@@ -1,4 +1,4 @@
-package io.thedonutdan.vehiclemaintenance.security;
+package org.thedonutdan.autolog.security;
 
 import java.time.Duration;
 

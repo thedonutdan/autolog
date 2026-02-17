@@ -19,17 +19,19 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Profile;
 
 /**
- * Vehicle Data Access Object for SQLite configuration
+ * Vehicle Data Access Object for Postgres configuration
  */
 @Repository
-public class SQLiteVehicleDAO implements VehicleDAO {
-    private final Connection conn;
+@Profile("postgres")
+public class PostgresVehicleDAO implements VehicleDAO {
+    private final DataSource datasource;
 
     @Autowired
-    public SQLiteVehicleDAO(DataSource dataSource) throws SQLException {
-        this.conn = dataSource.getConnection();
+    public PostgresVehicleDAO(DataSource dataSource) {
+        this.datasource = dataSource;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class SQLiteVehicleDAO implements VehicleDAO {
         String maintenanceRecordsQuery = """
                 INSERT INTO maintenance_records (
                 vehicle_id,
-                date,
+                service_date,
                 service_type_name,
                 service_type_default_expiry_miles,
                 service_type_default_expiry_time,
@@ -60,13 +62,15 @@ public class SQLiteVehicleDAO implements VehicleDAO {
                 notes
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
-        
+        Connection conn = null;
+
         try {
+            conn = datasource.getConnection();
             conn.setAutoCommit(false);
     
             try (PreparedStatement stmt = conn.prepareStatement(vehiclesQuery)) {
-                stmt.setString(1, vehicle.getId().toString());
-                stmt.setString(2, vehicle.getUserId().toString());
+                stmt.setObject(1, vehicle.getId());
+                stmt.setObject(2, vehicle.getUserId());
                 stmt.setString(3, vehicle.getVIN());
                 stmt.setString(4, vehicle.getMake());
                 stmt.setString(5, vehicle.getModel());
@@ -80,8 +84,8 @@ public class SQLiteVehicleDAO implements VehicleDAO {
             for (MaintenanceRecord record : vehicle.getMaintenanceHistory()) {
                 try (PreparedStatement stmt = conn.prepareStatement(maintenanceRecordsQuery)) {
                     ServiceType st = record.getServiceType();
-                    stmt.setString(1, vehicle.getId().toString());
-                    stmt.setString(2, record.getDate().toString());
+                    stmt.setObject(1, vehicle.getId());
+                    stmt.setObject(2, record.getDate());
                     stmt.setString(3, st.getName());
                     if (st.getDefaultExpiryMiles() != null) {
                         stmt.setInt(4, st.getDefaultExpiryMiles());
@@ -95,7 +99,7 @@ public class SQLiteVehicleDAO implements VehicleDAO {
                     } else {
                         stmt.setNull(7, java.sql.Types.INTEGER);
                     }
-                    stmt.setString(8, record.getExpiryDate() != null ? record.getExpiryDate().toString() : null);
+                    stmt.setObject(8, record.getExpiryDate() != null ? record.getExpiryDate() : null);
                     stmt.setString(9, record.getNotes());
                     
                     executeStrictUpdate(stmt, 1);
@@ -113,6 +117,10 @@ public class SQLiteVehicleDAO implements VehicleDAO {
             }
             e.printStackTrace();
             return false;
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ignore) {}
+            }
         }
     }
 
@@ -122,24 +130,26 @@ public class SQLiteVehicleDAO implements VehicleDAO {
                 SELECT * FROM vehicles WHERE id = ?
                 """;
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, id.toString());
+        try (Connection conn = datasource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);) {
+            stmt.setObject(1, id);
 
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                Vehicle vehicle = new Vehicle();
-                vehicle.setId(UUID.fromString(rs.getString("id")));
-                vehicle.setUserId(UUID.fromString(rs.getString("user_id")));
-                vehicle.setVIN(rs.getString("vin"));
-                vehicle.setMake(rs.getString("make"));
-                vehicle.setModel(rs.getString("model"));
-                vehicle.setYear(rs.getInt("year"));
-                vehicle.setLicensePlate(rs.getString("license_plate"));
-                vehicle.setMileage(rs.getInt("mileage"));
-                vehicle.setMaintenanceHistory(getMaintenanceRecords(id));
+                if (rs.next()) {
+                    Vehicle vehicle = new Vehicle();
+                    vehicle.setId(rs.getObject("id", UUID.class));
+                    vehicle.setUserId(rs.getObject("user_id", UUID.class));
+                    vehicle.setVIN(rs.getString("vin"));
+                    vehicle.setMake(rs.getString("make"));
+                    vehicle.setModel(rs.getString("model"));
+                    vehicle.setYear(rs.getInt("year"));
+                    vehicle.setLicensePlate(rs.getString("license_plate"));
+                    vehicle.setMileage(rs.getInt("mileage"));
+                    vehicle.setMaintenanceHistory(getMaintenanceRecords(id));
 
-                return vehicle;
+                    return vehicle;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -154,25 +164,28 @@ public class SQLiteVehicleDAO implements VehicleDAO {
                 SELECT * FROM vehicles WHERE user_id = ?
                 """;
         List<Vehicle> vehicles = new ArrayList<>();
+        
+        try (Connection conn = datasource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(vehiclesQuery);) {
+            
+            stmt.setObject(1, userId);
 
-        try (PreparedStatement stmt = conn.prepareStatement(vehiclesQuery)) {
-            stmt.setString(1, userId.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            ResultSet rs = stmt.executeQuery();
+                while(rs.next()) {
+                    Vehicle vehicle = new Vehicle();
+                    vehicle.setId(rs.getObject("id", UUID.class));
+                    vehicle.setUserId(rs.getObject("user_id", UUID.class));
+                    vehicle.setVIN(rs.getString("vin"));
+                    vehicle.setMake(rs.getString("make"));
+                    vehicle.setModel(rs.getString("model"));
+                    vehicle.setYear(rs.getInt("year"));
+                    vehicle.setLicensePlate(rs.getString("license_plate"));
+                    vehicle.setMileage(rs.getInt("mileage"));
+                    vehicle.setMaintenanceHistory(getMaintenanceRecords(vehicle.getId()));
 
-            while(rs.next()) {
-                Vehicle vehicle = new Vehicle();
-                vehicle.setId(UUID.fromString(rs.getString("id")));
-                vehicle.setUserId(UUID.fromString(rs.getString("user_id")));
-                vehicle.setVIN(rs.getString("vin"));
-                vehicle.setMake(rs.getString("make"));
-                vehicle.setModel(rs.getString("model"));
-                vehicle.setYear(rs.getInt("year"));
-                vehicle.setLicensePlate(rs.getString("license_plate"));
-                vehicle.setMileage(rs.getInt("mileage"));
-                vehicle.setMaintenanceHistory(getMaintenanceRecords(vehicle.getId()));
-
-                vehicles.add(vehicle);
+                    vehicles.add(vehicle);
+                }
             }
 
         } catch (SQLException e) {
@@ -190,17 +203,19 @@ public class SQLiteVehicleDAO implements VehicleDAO {
         String deleteMaintenanceRecordsQuery = """
             DELETE FROM maintenance_records WHERE vehicle_id = ?
             """;
+        Connection conn = null;
 
         try {
+            conn = datasource.getConnection();
             conn.setAutoCommit(false);
 
             try (PreparedStatement stmt = conn.prepareStatement(deleteMaintenanceRecordsQuery)) {
-                stmt.setString(1, vehicle.getId().toString());
+                stmt.setObject(1, vehicle.getId());
                 stmt.executeUpdate();
             }
 
             try (PreparedStatement stmt = conn.prepareStatement(deleteVehiclesQuery)) {
-                stmt.setString(1, vehicle.getId().toString());
+                stmt.setObject(1, vehicle.getId());
 
                 executeStrictUpdate(stmt, 1);
             }
@@ -220,6 +235,10 @@ public class SQLiteVehicleDAO implements VehicleDAO {
             }
             e.printStackTrace();
             return false;
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ignore) {}
+            }
         }
     }
 
@@ -231,18 +250,21 @@ public class SQLiteVehicleDAO implements VehicleDAO {
         String maintenanceRecordsQuery = """
                 DELETE FROM maintenance_records WHERE vehicle_id = ?
                 """;
+        Connection conn = null;
+
         try {
+            conn = datasource.getConnection();
             conn.setAutoCommit(false);
 
             try (PreparedStatement stmt = conn.prepareStatement(maintenanceRecordsQuery)) {
-                stmt.setString(1, id.toString());
+                stmt.setObject(1, id);
 
                 stmt.executeUpdate();
 
             }
 
             try (PreparedStatement stmt = conn.prepareStatement(vehiclesQuery)) {
-                stmt.setString(1, id.toString());
+                stmt.setObject(1, id);
     
                 stmt.executeUpdate();
             }
@@ -250,7 +272,16 @@ public class SQLiteVehicleDAO implements VehicleDAO {
             conn.commit();
             return true;
         } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException rollBackEx) {
+                rollBackEx.printStackTrace();
+            }
             e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ignore) {}
+            }
         }
 
         return false;
@@ -269,46 +300,42 @@ public class SQLiteVehicleDAO implements VehicleDAO {
                 SELECT * FROM maintenance_records WHERE vehicle_id = ?
                 """;
         
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, id.toString());
 
-            ResultSet rs = stmt.executeQuery();
+        try (Connection conn = datasource.getConnection()) {
+            
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setObject(1, id);
 
-            while (rs.next()) {
-                MaintenanceRecord record = new MaintenanceRecord();
-                ServiceType st = new ServiceType();
-                st.setName(rs.getString("service_type_name"));
-                st.setDefaultExpiryMiles(getNullableInt(rs, "service_type_default_expiry_miles"));
-                st.setDefaultExpiryTime(getNullablePeriod(rs, "service_type_default_expiry_time"));
+                ResultSet rs = stmt.executeQuery();
 
-                record.setDate(LocalDate.parse(rs.getString("date")));
-                record.setServiceType(st);
-                record.setMileage(rs.getInt("mileage"));
-                record.setExpiryMileage(getNullableInt(rs, "expiry_mileage"));
-                record.setExpiryDate(getNullableDate(rs, "expiry_date"));
-                record.setNotes(rs.getString("notes"));
+                while (rs.next()) {
+                    MaintenanceRecord record = new MaintenanceRecord();
+                    ServiceType st = new ServiceType();
+                    st.setName(rs.getString("service_type_name"));
+                    st.setDefaultExpiryMiles(rs.getObject("service_type_default_expiry_miles", Integer.class));
+                    st.setDefaultExpiryTime(getNullablePeriod(rs, "service_type_default_expiry_time"));
 
-                records.add(record);
+                    record.setDate(rs.getObject("service_date", LocalDate.class));
+                    record.setServiceType(st);
+                    record.setMileage(rs.getInt("mileage"));
+                    record.setExpiryMileage(rs.getObject("expiry_mileage", Integer.class));
+                    record.setExpiryDate(rs.getObject("expiry_date", LocalDate.class));
+                    record.setNotes(rs.getString("notes"));
+
+                    records.add(record);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
+        } 
 
         return records;
-    }
-
-    private Integer getNullableInt(ResultSet rs, String column) throws SQLException {
-        int val = rs.getInt(column);
-        return rs.wasNull() ? null : val;
     }
 
     private Period getNullablePeriod(ResultSet rs, String column) throws SQLException {
         String raw = rs.getString(column);
         return (raw != null) ? Period.parse(raw) : null;
-    }
-
-    private LocalDate getNullableDate(ResultSet rs, String column) throws SQLException {
-        String raw = rs.getString(column);
-        return (raw != null) ? LocalDate.parse(raw) : null;
     }
 }
